@@ -49,14 +49,16 @@ def validate(m):
     if not isinstance(resources, dict) or not isinstance(steps, dict) or not steps:
         fail("ModelSchemaError", "resources and nonempty steps mappings required")
     for r, spec in resources.items():
+        if not isinstance(r, str) or not r:
+            fail("ResourceError", "resource names must be nonempty strings")
         keys(spec, {"capacity", "cost_rate"}, "ResourceError")
         c = spec.get("capacity")
         if isinstance(c, bool) or not isinstance(c, int) or c < 1:
             fail("ResourceError", f"{r}: capacity must be a positive integer")
         number(spec.get("cost_rate"), "ResourceError")
     for s, spec in steps.items():
-        if not isinstance(s, str):
-            fail("StepError", "step names must be strings")
+        if not isinstance(s, str) or not s:
+            fail("StepError", "step names must be nonempty strings")
         keys(spec, {"duration", "resources", "queue", "next", "fork", "join", "auto_approve"}, "StepError")
         distribution(spec.get("duration"), "DurationError")
         if not isinstance(spec.get("queue"), str) or not spec["queue"]:
@@ -72,19 +74,19 @@ def validate(m):
             fail("BranchError", "next must be a list")
         for b in nxt:
             keys(b, {"step", "probability"}, "BranchError")
-            if b.get("step") not in steps:
+            if not isinstance(b.get("step"), str) or b["step"] not in steps:
                 fail("ReferenceError", f"{s}: missing next step")
             number(b.get("probability"), "BranchError")
         if nxt and not math.isclose(sum(b["probability"] for b in nxt), 1, abs_tol=1e-12):
             fail("BranchError", f"{s}: probabilities must sum to one")
         if "fork" in spec:
-            if nxt or not isinstance(spec["fork"], list) or len(spec["fork"]) < 2 or len(set(spec["fork"])) != len(spec["fork"]) or any(x not in steps for x in spec["fork"]):
+            if nxt or not isinstance(spec["fork"], list) or len(spec["fork"]) < 2 or any(not isinstance(x, str) for x in spec["fork"]) or len(set(spec["fork"])) != len(spec["fork"]) or any(x not in steps for x in spec["fork"]):
                 fail("ForkError", "fork must name distinct existing steps and cannot have next")
         if "join" in spec and (isinstance(spec["join"], bool) or not isinstance(spec["join"], int) or spec["join"] < 2):
             fail("JoinError", "join must be an integer >= 2")
         if "auto_approve" in spec:
             number(spec["auto_approve"], "ThresholdError")
-    if m.get("start") not in steps:
+    if not isinstance(m.get("start"), str) or m["start"] not in steps:
         fail("ReferenceError", "start step missing")
     visiting, visited = set(), set()
     def walk(s):

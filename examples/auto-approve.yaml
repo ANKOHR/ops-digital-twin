@@ -1,0 +1,5 @@
+changes:
+- step: QA
+  threshold: 75
+  type: auto_approve
+name: FICTIONAL auto-approve low-value orders

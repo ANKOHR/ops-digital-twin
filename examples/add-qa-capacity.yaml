@@ -1,0 +1,5 @@
+changes:
+- amount: 3
+  resource: QA
+  type: add_capacity
+name: FICTIONAL add QA capacity

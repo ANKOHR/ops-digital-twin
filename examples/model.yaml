@@ -1,0 +1,78 @@
+arrivals:
+  count: 80
+  interval:
+    kind: fixed
+    value: 1
+  value:
+    high: 100
+    kind: uniform
+    low: 0
+fictional: true
+name: FICTIONAL synthetic order fulfilment
+resources:
+  QA:
+    capacity: 1
+    cost_rate: 2
+  pack:
+    capacity: 1
+    cost_rate: 1
+  pick:
+    capacity: 1
+    cost_rate: 1
+  receive:
+    capacity: 1
+    cost_rate: 1
+  ship:
+    capacity: 1
+    cost_rate: 1
+start: receive
+steps:
+  QA:
+    duration:
+      high: 5
+      kind: uniform
+      low: 3
+    next:
+    - probability: 1
+      step: ship
+    queue: QA
+    resources:
+      QA: 1
+  pack:
+    duration:
+      kind: fixed
+      value: 0.25
+    next:
+    - probability: 1
+      step: QA
+    queue: pack
+    resources:
+      pack: 1
+  pick:
+    duration:
+      kind: fixed
+      value: 0.25
+    next:
+    - probability: 1
+      step: pack
+    queue: pick
+    resources:
+      pick: 1
+  receive:
+    duration:
+      kind: fixed
+      value: 0.25
+    next:
+    - probability: 1
+      step: pick
+    queue: receive
+    resources:
+      receive: 1
+  ship:
+    duration:
+      kind: fixed
+      value: 0.25
+    next: []
+    queue: ship
+    resources:
+      ship: 1
