@@ -1,0 +1,12 @@
+__pycache__/
+.pytest_cache/
+*.egg-info/
+.venv/
+build/
+dist/
+odt-prompt.txt
+odt-launch.py
+odt-codex.log
+*.log
+outputs/
+BUILD-DONE.txt

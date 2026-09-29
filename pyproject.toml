@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ops-digital-twin"
+version = "1.0.0"
+description = "Deterministic declared-model workflow simulation"
+requires-python = ">=3.10"
+dependencies = ["PyYAML>=6"]
+
+[project.optional-dependencies]
+test = ["pytest>=8"]
+
+[project.scripts]
+odt = "odt.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["odt*"]
